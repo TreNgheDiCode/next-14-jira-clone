@@ -21,6 +21,7 @@ import React, { useRef } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { ImageIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   onCancel?: () => void;
@@ -28,6 +29,7 @@ interface Props {
 
 export default function CreateWorkspaceForm({ onCancel }: Props) {
   const { mutate, isPending } = useCreateWorkspace();
+  const router = useRouter();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -47,9 +49,11 @@ export default function CreateWorkspaceForm({ onCancel }: Props) {
     mutate(
       { form: finalValues },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           form.reset();
-          // TODO: Redirect to the workspace page
+          if ("data" in data) {
+            router.push(`/workspaces/${data.data.$id}`);
+          }
         },
       }
     );

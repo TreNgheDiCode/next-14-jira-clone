@@ -25,9 +25,9 @@ export const useCreateWorkspace = () => {
           // Fallback if the 'error' property does not exist
           throw new Error("Failed to create workspace");
         }
+      } else {
+        return jsonResponse;
       }
-
-      return jsonResponse;
     },
     onSuccess: () => {
       toast.success("Workspace created successfully");
