@@ -27,7 +27,7 @@ const app = new Hono()
       maxAge: 60 * 60 * 24 * 30,
     });
 
-    return c.json({ success: true });
+    return c.json({ message: "Logged in successfully" });
   })
   .post("/register", zValidator("json", registerSchema), async (c) => {
     const { name, email, password } = c.req.valid("json");
@@ -65,7 +65,7 @@ const app = new Hono()
     deleteCookie(c, AUTH_COOKIE);
     await account.deleteSession("current");
 
-    return c.json({ success: true });
+    return c.json({ message: "Logged out" });
   });
 
 export default app;

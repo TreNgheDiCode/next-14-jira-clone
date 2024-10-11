@@ -1,22 +1,25 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/rpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InferResponseType } from "hono";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-// Input type
-type RequestType = InferRequestType<(typeof client.api.auth.logout)["$post"]>;
 // Output type
 type ResponseType = InferResponseType<(typeof client.api.auth.logout)["$post"]>;
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
-  const mutation = useMutation<ResponseType, Error, RequestType>({
+  const mutation = useMutation<ResponseType, Error>({
     mutationFn: async () => {
       const response = await client.api.auth.logout["$post"]();
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      router.refresh();
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      toast.success(data.message);
     },
   });
 
