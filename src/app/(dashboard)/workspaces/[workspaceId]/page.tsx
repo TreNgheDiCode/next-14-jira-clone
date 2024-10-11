@@ -1,5 +1,5 @@
-import { getCurrentUser } from "@/features/auth/actions";
-import { getWorkspace } from "@/features/workspaces/actions";
+import { getCurrentUser } from "@/features/auth/queries";
+import { getWorkspace } from "@/features/workspaces/queries";
 import { redirect } from "next/navigation";
 
 export default async function WorkspaceIdPage({
