@@ -14,12 +14,20 @@ export const useLogout = () => {
   const mutation = useMutation<ResponseType, Error>({
     mutationFn: async () => {
       const response = await client.api.auth.logout["$post"]();
+
+      if (!response.ok) {
+        throw new Error((await response.json()).message);
+      }
+
       return response.json();
     },
     onSuccess: (data) => {
       router.refresh();
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error.message || "An error occurred");
     },
   });
 

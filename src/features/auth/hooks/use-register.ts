@@ -18,12 +18,20 @@ export const useRegister = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json }) => {
       const response = await client.api.auth.register["$post"]({ json });
+
+      if (!response.ok) {
+        throw new Error((await response.json()).message);
+      }
+
       return response.json();
     },
     onSuccess: (data) => {
       toast.success(data.message);
       router.refresh();
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+    onError: (error) => {
+      toast.error(error.message || "An error occurred");
     },
   });
 
