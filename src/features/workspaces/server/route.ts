@@ -1,17 +1,17 @@
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
-import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
-import { sessionMiddleware } from "@/lib/sessionMiddleware";
 import {
   DATABASE_ID,
   IMAGES_BUCKET_ID,
   MEMBERS_ID,
   WORKSPACES_ID,
 } from "@/config";
-import { AppwriteException, ID, Query } from "node-appwrite";
 import { MemberRole } from "@/features/members/types";
-import { generateInviteCode } from "@/lib/utils";
 import { getMember } from "@/features/members/utils";
+import { sessionMiddleware } from "@/lib/sessionMiddleware";
+import { generateInviteCode } from "@/lib/utils";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { AppwriteException, ID, Query } from "node-appwrite";
+import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 
 const app = new Hono()
   .get("/", sessionMiddleware, async (c) => {
@@ -176,6 +176,28 @@ const app = new Hono()
         return c.json({ error: "Failed to update workspace" }, 500);
       }
     }
-  );
+  )
+  .delete("/:workspaceId", sessionMiddleware, async (c) => {
+    const databases = c.get("databases");
+    const user = c.get("user");
+
+    const { workspaceId } = c.req.param();
+
+    const member = await getMember({
+      databases,
+      workspaceId,
+      userId: user.$id,
+    });
+
+    if (!member || member.role !== MemberRole.ADMIN) {
+      return c.json({ error: "Unauthorized" }, 403);
+    }
+
+    // TODO: Delete all members, projects, tasks of the workspace
+
+    await databases.deleteDocument(DATABASE_ID, WORKSPACES_ID, workspaceId);
+
+    return c.json({ data: { $id: workspaceId } });
+  });
 
 export default app;
