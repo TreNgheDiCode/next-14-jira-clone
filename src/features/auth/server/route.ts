@@ -29,8 +29,12 @@ const app = new Hono()
       });
 
       return c.json({ message: "Logged in successfully" });
-    } catch {
-      return c.json({ message: "Internal server error" });
+    } catch (error) {
+      if (error instanceof AppwriteException) {
+        return c.json({ message: error.message }, 400);
+      }
+
+      return c.json({ message: "Internal server error" }, 500);
     }
   })
   .post("/register", zValidator("json", registerSchema), async (c) => {
@@ -57,10 +61,10 @@ const app = new Hono()
       return c.json({ message: "Failed to create user" });
     } catch (error) {
       if (error instanceof AppwriteException) {
-        return c.json({ message: error.message });
+        return c.json({ message: error.message }, 400);
       }
 
-      return c.json({ message: "Internal server error" });
+      return c.json({ message: "Internal server error" }, 500);
     }
   })
   .post("/logout", sessionMiddleware, async (c) => {
