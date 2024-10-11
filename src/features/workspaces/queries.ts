@@ -68,3 +68,27 @@ export const getWorkspace = async ({
     return null;
   }
 };
+
+export const getWorkspaceInfo = async ({
+  workspaceId,
+}: {
+  workspaceId: string;
+}) => {
+  try {
+    const { databases } = await createSessionClient();
+
+    const workspaces = await databases.getDocument<Workspace>(
+      DATABASE_ID,
+      WORKSPACES_ID,
+      workspaceId
+    );
+
+    return {
+      name: workspaces.name,
+    };
+  } catch (error) {
+    console.error("Error getting current user", error);
+
+    return null;
+  }
+};

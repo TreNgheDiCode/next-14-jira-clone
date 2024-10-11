@@ -21,3 +21,9 @@ export const updateWorkspaceSchema = z.object({
     ])
     .optional(),
 });
+
+export const joinWorkspaceSchema = z.object({
+  code: z.string().min(10, {
+    message: "Invalid invite code",
+  }),
+});
