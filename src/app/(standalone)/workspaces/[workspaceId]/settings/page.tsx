@@ -13,7 +13,7 @@ export default async function WorkspaceIdSettingsPage({
 
   const initialValues = await getWorkspace({ workspaceId: params.workspaceId });
 
-  if (!initialValues) redirect(`/workspaces/${params.workspaceId}`);
+  if (!initialValues) redirect(`/`);
 
   return (
     <div className="w-full max-w-2xl">
