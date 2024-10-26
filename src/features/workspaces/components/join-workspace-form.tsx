@@ -13,7 +13,6 @@ import Link from "next/link";
 import { useJoinWorkspace } from "../hooks/use-join-workspace";
 import { useInviteCode } from "../hooks/use-invite-code";
 import { useWorkspaceId } from "../hooks/use-workspace-id";
-import { useRouter } from "next/navigation";
 
 export default function JoinWorkspaceForm({
   initialValues,
@@ -23,7 +22,6 @@ export default function JoinWorkspaceForm({
   const { mutate, isPending } = useJoinWorkspace();
   const code = useInviteCode();
   const workspaceId = useWorkspaceId();
-  const router = useRouter();
 
   const onSubmit = () => {
     mutate(
@@ -32,9 +30,7 @@ export default function JoinWorkspaceForm({
         json: { code },
       },
       {
-        onSuccess: ({ data }) => {
-          router.push(`/workspaces/${data.$id}`);
-        },
+        onSuccess: () => {},
       }
     );
   };

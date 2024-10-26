@@ -5,6 +5,7 @@ import Link from "next/link";
 import DottedSeparator from "../dottedSeparator";
 import SidebarNavigation from "./navigation";
 import WorkspaceSwitcher from "./workspaceSwitcher";
+import ProjectsNavigation from "./projectsNavigation";
 
 export default function Sidebar() {
   return (
@@ -16,6 +17,8 @@ export default function Sidebar() {
       <WorkspaceSwitcher />
       <DottedSeparator className="my-4" />
       <SidebarNavigation />
+      <DottedSeparator className="my-4" />
+      <ProjectsNavigation />
     </aside>
   );
 }
