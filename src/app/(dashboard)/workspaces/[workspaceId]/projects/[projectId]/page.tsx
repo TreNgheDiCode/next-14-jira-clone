@@ -5,6 +5,7 @@ import { getProject } from "@/features/projects/queries";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import TaskViewSwitcher from "../../../../../../features/tasks/components/tastViewSwitcher";
 
 interface Props {
   params: {
@@ -40,6 +41,7 @@ export default async function ProjectIdPage({ params }: Props) {
           </Button>
         </div>
       </div>
+      <TaskViewSwitcher />
     </div>
   );
 }
