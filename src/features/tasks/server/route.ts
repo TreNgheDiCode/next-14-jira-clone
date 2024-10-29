@@ -7,6 +7,7 @@ import { DATABASE_ID, MEMBERS_ID, PROJECTS_ID, TASKS_ID } from "@/config";
 import { ID, Query } from "node-appwrite";
 import { createAdminClient } from "@/lib/appwrite";
 import { Project } from "@/features/projects/types";
+import { getProject } from "@/features/projects/queries";
 
 const app = new Hono()
   .get(
@@ -37,27 +38,22 @@ const app = new Hono()
       ];
 
       if (projectId) {
-        console.log("projectId", projectId);
         query.push(Query.equal("projectId", projectId));
       }
 
       if (status) {
-        console.log("status", status);
         query.push(Query.equal("status", status));
       }
 
       if (assigneeId) {
-        console.log("assigneeId", assigneeId);
         query.push(Query.equal("assigneeId", assigneeId));
       }
 
       if (search) {
-        console.log("search", search);
         query.push(Query.search("name", search));
       }
 
       if (dueDate) {
-        console.log("dueDate", dueDate);
         query.push(Query.equal("dueDate", dueDate));
       }
 
@@ -110,8 +106,15 @@ const app = new Hono()
     async (c) => {
       const user = c.get("user");
       const databases = c.get("databases");
-      const { description, dueDate, assigneeId, name, status, workspaceId } =
-        c.req.valid("json");
+      const {
+        description,
+        dueDate,
+        assigneeId,
+        name,
+        status,
+        projectId,
+        workspaceId,
+      } = c.req.valid("json");
 
       const member = await getMember({
         databases,
@@ -123,13 +126,20 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
+      const project = await getProject({ projectId });
+
+      if (!project) {
+        return c.json({ error: "Project not found" }, 404);
+      }
+
       const highestTaskPosition = await databases.listDocuments(
         DATABASE_ID,
         TASKS_ID,
         [
           Query.equal("status", status),
           Query.equal("workspaceId", workspaceId),
-          Query.orderAsc("$position"),
+          Query.equal("projectId", projectId),
+          Query.orderAsc("position"),
           Query.limit(1),
         ]
       );
@@ -150,6 +160,7 @@ const app = new Hono()
           name,
           status,
           workspaceId,
+          projectId,
           position: newPosition,
         }
       );

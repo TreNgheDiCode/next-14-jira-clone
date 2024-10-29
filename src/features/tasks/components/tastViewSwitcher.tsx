@@ -4,10 +4,13 @@ import DottedSeparator from "@/components/dottedSeparator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlusIcon } from "lucide-react";
+import { useCreateTaskModal } from "../hooks/use-create-task-modal";
 
 export default function TaskViewSwitcher() {
+  const { onOpen } = useCreateTaskModal();
+
   return (
-    <Tabs className="flex-1 w-full border rounded-lg">
+    <Tabs className="flex-1 w-full border rounded-lg" defaultValue="table">
       <div className="fle flex-col overflow-auto p-4">
         <div className="flex flex-col gap-y-2 lg:flex-row justify-between items-center">
           <TabsList className="w-full lg:w-auto">
@@ -21,7 +24,7 @@ export default function TaskViewSwitcher() {
               Calendar
             </TabsTrigger>
           </TabsList>
-          <Button size="sm" className="w-full lg:w-auto">
+          <Button onClick={onOpen} size="sm" className="w-full lg:w-auto">
             <PlusIcon className="size-4 mr-2" />
             New
           </Button>
