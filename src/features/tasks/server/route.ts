@@ -8,19 +8,20 @@ import { ID, Query } from "node-appwrite";
 import { createAdminClient } from "@/lib/appwrite";
 import { Project } from "@/features/projects/types";
 import { getProject } from "@/features/projects/queries";
+import { Task } from "../types";
 
 const app = new Hono()
   .get(
     "/",
     sessionMiddleware,
-    zValidator("json", queryTaskSchema),
+    zValidator("query", queryTaskSchema),
     async (c) => {
       const { users } = await createAdminClient();
       const databases = c.get("databases");
       const user = c.get("user");
 
       const { workspaceId, projectId, assigneeId, status, search, dueDate } =
-        c.req.valid("json");
+        c.req.valid("query");
 
       const member = await getMember({
         databases,
@@ -57,7 +58,11 @@ const app = new Hono()
         query.push(Query.equal("dueDate", dueDate));
       }
 
-      const tasks = await databases.listDocuments(DATABASE_ID, TASKS_ID, query);
+      const tasks = await databases.listDocuments<Task>(
+        DATABASE_ID,
+        TASKS_ID,
+        query
+      );
 
       const projectIds = tasks.documents.map((task) => task.projectId);
       const assigneeIds = tasks.documents.map((task) => task.assigneeId);

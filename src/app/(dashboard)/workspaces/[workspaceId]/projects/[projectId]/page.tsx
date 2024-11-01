@@ -5,13 +5,18 @@ import { getProject } from "@/features/projects/queries";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import TaskViewSwitcher from "../../../../../../features/tasks/components/tastViewSwitcher";
+import dynamic from "next/dynamic";
 
 interface Props {
   params: {
     projectId: string;
   };
 }
+
+const TaskViewSwitcher = dynamic(
+  () => import("@/features/tasks/components/tastViewSwitcher"),
+  { ssr: false }
+)
 
 export default async function ProjectIdPage({ params }: Props) {
   const user = await getCurrentUser();
