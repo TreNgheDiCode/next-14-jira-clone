@@ -7,7 +7,7 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { Loader, PlusIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useCreateTaskModal } from "../hooks/use-create-task-modal";
-import { useGetTasks } from "../hooks/use-get-task";
+import { useGetTasks } from "../hooks/use-get-tasks";
 import DataFilters from "./dataFilters";
 import { useTaskFilters } from "../hooks/use-task-filters";
 import { DataTable } from "./table/dataTable";
